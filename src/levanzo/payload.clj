@@ -4,10 +4,11 @@
             [levanzo.hydra :as hydra]
             [levanzo.jsonld :as jsonld]
             [levanzo.spec.jsonld :as jsonld-spec]
-            [clojure.spec :as s]
+            [clojure.spec.alpha :as s]
             [clojure.string :as string]
             [clojure.test.check.generators :as tg]
-            [cemerick.url :refer [url-encode] :as url]))
+            [cemerick.url :refer [url-encode] :as url])
+  (:refer-clojure :exclude [type]))
 
 (s/def ::common-props (s/with-gen (s/keys :req [::hydra/id])
                         #(tg/fmap (fn [uri]
@@ -118,8 +119,12 @@
       uri
       (throw (Exception. (str "Cannot obtain URI from " object))))))
 
-(s/def ::args (s/* (s/or :keys keyword?
+;; (s/def ::args (s/or :keys keyword?
+;;                     :val any?))
+(s/def ::args (s/coll-of (s/or :keys keyword?
                          :val any?)))
+
+
 (s/def ::model ::uri-or-model-args)
 (s/def ::base ::jsonld-spec/uri)
 
@@ -128,7 +133,7 @@
                                        :opt-un [::args
                                                 ::base]))
         :ret ::hydra/id)
-(defn link-for [{:keys[model args base]
+(defn link-for [{:keys [model args base]
                  :as link-args
                  :or {args []}}]
   (s/assert (s/keys :req-un [::model]
@@ -200,12 +205,14 @@
                                         (if (string? v)
                                           [k {"@id" v}]
                                           [k {"@value" v}])))
-                                 (into {})))
+                                 (into [])))
                           (tg/vector
                            (tg/tuple (s/gen ::jsonld-spec/uri)
                                      (tg/one-of [(s/gen ::jsonld-spec/uri)
                                                  tg/pos-int])))))
         :ret ::jsonld-spec/expanded-jsonld)
+
+
 (defn jsonld
   "Builds a new JSON-LD object"
   [& props]

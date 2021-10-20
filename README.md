@@ -53,7 +53,7 @@ The following snippet from the sample application shows how to declare a vocabul
 
 ``` clojure
 ;; let's check the structure of the arguments
-(clojure.spec/check-asserts true)
+(clojure.spec.alpha/check-asserts true)
 
 (require '[levanzo.namespaces :as lns]
          '[clojure.test :refer [is]])
@@ -331,7 +331,7 @@ The following snippet shows the validation of different instances for the Person
 
 Future versions of the library will add support for more sophisticated declarative validations with SHACL.
 
-Another interesting features of Levanzo when working with payloads is the integraction with `clojure.spec` in order to sample generated instances of a particular class.
+Another interesting features of Levanzo when working with payloads is the integraction with `clojure.spec.alpha` in order to sample generated instances of a particular class.
 A Generator for any API class can be obtained using the functions in the `levanzo.spec.schema` namespace.
 
 For example, to generate some instances of Person we can use the following code:

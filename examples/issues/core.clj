@@ -12,7 +12,7 @@
             [org.httpkit.server :as http-kit]
             [monger.collection :as mc]))
 
-(clojure.spec/check-asserts true)
+(clojure.spec.alpha/check-asserts true)
 
 (defn cors-enabled [middleware]
   (fn [request]

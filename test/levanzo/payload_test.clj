@@ -3,7 +3,7 @@
             [levanzo.payload :as payload]
             [levanzo.namespaces :as lns]
             [levanzo.spec.utils :as spec-utils]
-            [clojure.spec.test :as stest]))
+            [clojure.spec.test.alpha :as stest]))
 
 (deftest context-test
   (spec-utils/check-symbol `payload/context)

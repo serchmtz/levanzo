@@ -5,10 +5,11 @@
             [levanzo.hydra :as hydra]
             [levanzo.spec.jsonld :as jsonld-spec]
             [levanzo.utils :as utils]
-            [clojure.spec :as s]
-            [clojure.spec.gen :as gen]
-            [clojure.spec.test :as stest]
-            [clojure.test.check.generators :as tg]))
+            [clojure.spec.alpha :as s]
+            [clojure.spec.gen.alpha :as gen]
+            [clojure.spec.test.alpha :as stest]
+            [clojure.test.check.generators :as tg])
+  (:refer-clojure :exclude [resolve]))
 
 (defn make-xsd-type-gen [type]
   (condp = type

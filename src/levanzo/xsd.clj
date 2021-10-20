@@ -1,5 +1,6 @@
 (ns levanzo.xsd
-  (:require [levanzo.namespaces :refer [xsd]]))
+  (:require [levanzo.namespaces :refer [xsd]])
+  (:refer-clojure :exclude [float double time]))
 
 (def integer (xsd "integer"))
 (def float (xsd "float"))

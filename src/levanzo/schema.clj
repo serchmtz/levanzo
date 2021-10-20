@@ -4,12 +4,13 @@
   (:require [levanzo.hydra :as hydra]
             [levanzo.spec.jsonld :as jsonld-spec]
             [levanzo.namespaces :refer [xsd prefix-for-ns resolve]]
-            [clojure.spec :as s]
+            [clojure.spec.alpha :as s]
             [clojure.string :as string]
-            [clojure.spec.test :as stest]
-            [clojure.spec.gen :as gen]
+            [clojure.spec.test.alpha :as stest]
+            [clojure.spec.gen.alpha :as gen]
             [clojure.test.check.generators :as tg]
-            [taoensso.timbre :as log]))
+            [taoensso.timbre :as log])
+  (:refer-clojure :exclude [resolve]))
 
 ;; context in which a validation must be performed: reading (GET) , write (POST), update (PUT/PATCH)
 (s/def ::mode #{:read :write :update})

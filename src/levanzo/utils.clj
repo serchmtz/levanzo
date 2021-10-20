@@ -1,5 +1,5 @@
 (ns levanzo.utils
-  (:require [clojure.spec :as s]
+  (:require [clojure.spec.alpha :as s]
             [clojure.test.check.generators :as tg]
             [clojure.string :as string]))
 

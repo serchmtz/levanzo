@@ -2,7 +2,7 @@
   (:require [clojure.test :refer :all]
             [levanzo.routing :as routing]
             [levanzo.spec.utils :as spec-utils]
-            [clojure.spec :as s]
+            [clojure.spec.alpha :as s]
             [bidi.bidi :as bidi]))
 
 (def handler (fn [a b c] b))
@@ -27,10 +27,12 @@
     (is (= (keyword "/vocab#Class") (:handler (bidi/match-route routes "/"))))
     (is (= (keyword "/vocab#Nested1") (:handler (bidi/match-route routes "/nested1"))))
     (is (= (keyword "/vocab#Nested2") (:handler (bidi/match-route routes "/nested1/nested2/3"))))
-    (is (= (keyword "/vocab#Nested3")) (:handler (bidi/match-route routes "/nested3/4")))))
+    (is (= (keyword "/vocab#Nested3") (:handler (bidi/match-route routes "/nested3/4"))))))
 
 (deftest link-for-test
   (routing/clear!)
   (let [routes (routing/process-routes test-routes)]
     (is (= "/" (routing/link-for "/vocab#Class")))
     (is (= "/nested1/nested2/5" (routing/link-for "/vocab#Nested2" :id 5)))))
+
+(spec-utils/check-symbol (symbol "f00"))

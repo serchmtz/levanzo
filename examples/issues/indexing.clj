@@ -128,8 +128,8 @@
 
 (deftest indices-test
 
-  (clojure.spec/check-asserts true)
-  (require '[clojure.spec :as s])
+  (clojure.spec.alpha/check-asserts true)
+  (require '[clojure.spec.alpha :as s])
 
 
   (indexing/api-index indices)

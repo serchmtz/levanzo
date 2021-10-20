@@ -1,5 +1,5 @@
 (ns levanzo.indexing
-  (:require [clojure.spec :as s]
+  (:require [clojure.spec.alpha :as s]
             [clojure.string :as string]
             [cemerick.url :as url]
             [levanzo.hydra :as hydra]

@@ -1,8 +1,8 @@
 (ns levanzo.spec.jsonld
   (:require [clojure.string :as string]
-            [clojure.spec :as s]
-            [clojure.spec.test :as stest]
-            [clojure.spec.gen :as gen]
+            [clojure.spec.alpha :as s]
+            [clojure.spec.test.alpha :as stest]
+            [clojure.spec.gen.alpha :as gen]
             [clojure.test.check.generators :as tg])
   (:import [org.apache.commons.validator.routines UrlValidator]))
 

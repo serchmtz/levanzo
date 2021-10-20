@@ -4,8 +4,8 @@
             [levanzo.hydra :as hydra]
             [levanzo.spec.schema :as schema-spec]
             [levanzo.spec.utils :as spec-utils]
-            [clojure.spec :as s]
-            [clojure.spec.gen :as gen]))
+            [clojure.spec.alpha :as s]
+            [clojure.spec.gen.alpha :as gen]))
 
 
 (deftest check-xsd-range-test

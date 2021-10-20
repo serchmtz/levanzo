@@ -247,7 +247,7 @@
                                                             :base base})]})))))))
 
 (deftest make-handlers-test
-  (do (clojure.spec/check-asserts true)
+  (do (clojure.spec.alpha/check-asserts true)
       (let [index (indexing/api-index indices)
             {:keys [resource-handlers
                     properties-handlers
@@ -264,7 +264,7 @@
                 (map (fn [h] (-> h :property-model :common-props ::hydra/id))))))))
 
 (deftest indexing-test
-  (do (clojure.spec/check-asserts true)
+  (do (clojure.spec.alpha/check-asserts true)
       (let [index (indexing/api-index indices)
             indexer (indexing/make-indexer API index)
             response (indexer {:s {"@id" (payload/link-for {:model Person
@@ -294,7 +294,7 @@
 
 
 (deftest predicate-indexing-test
-  (do (clojure.spec/check-asserts true)
+  (do (clojure.spec.alpha/check-asserts true)
       (let [index (indexing/api-index indices)
             indexer (indexing/make-indexer API index)
             response (indexer {:s nil
@@ -327,7 +327,7 @@
 
 
 (deftest join-indexing-test
-  (do (clojure.spec/check-asserts true)
+  (do (clojure.spec.alpha/check-asserts true)
       (let [index (indexing/api-index indices)
             indexer (indexing/make-indexer API index)
             response (indexer {:s {"@id" (payload/link-for {:model Person

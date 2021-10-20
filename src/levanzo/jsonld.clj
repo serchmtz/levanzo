@@ -1,5 +1,5 @@
 (ns levanzo.jsonld
-  (:require [clojure.spec :as s]
+  (:require [clojure.spec.alpha :as s]
             [clojure.test.check.generators :as tg])
   (:import [com.github.jsonldjava.core JsonLdProcessor JsonLdOptions DocumentLoader]))
 
@@ -87,7 +87,6 @@
 (defn expand-json-ld
   ([json-ld]
    (java->clj (JsonLdProcessor/expand json-ld))))
-
 
 (defn flatten-json-ld
   ([json-ld context]

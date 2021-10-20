@@ -3,7 +3,7 @@
 (require '[clojure.string :as string])
 
 ;; let's check the structure of the arguments
-(clojure.spec/check-asserts true)
+(clojure.spec.alpha.alpha/check-asserts true)
 
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -212,7 +212,7 @@
                         {:supported-classes [sorg-Person]})
 
 ;; Generating instances
-(require '[clojure.spec.gen :as gen] :reload
+(require '[clojure.spec.gen.alpha :as gen] :reload
          '[levanzo.spec.schema :as schema-spec] :reload)
 
 
@@ -341,7 +341,7 @@
 (require '[levanzo.http :as http] :reload)
 
 ;; let's check the structure of the arguments to middleware
-(clojure.spec/check-asserts true)
+(clojure.spec.alpha/check-asserts true)
 
 (def people-db (atom {"http://localhost:8080/people/1"
                       {"@id" "http://localhost:8080/people/1",

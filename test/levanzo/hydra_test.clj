@@ -1,5 +1,5 @@
 (ns levanzo.hydra-test
-  (:require [clojure.spec :as s]
+  (:require [clojure.spec.alpha :as s]
             [clojure.test :refer :all]
             [levanzo.namespaces :as lns]
             [levanzo.spec.utils :as spec-utils]
@@ -150,7 +150,7 @@
                                                   ::hydra/is-paginated false
                                                   ::hydra/member-class "http://test.com#Class"}))]
     (is (= "http://test.com#MyCollection" (get jsonld "@id")))
-    (is (= "My Collection") (get jsonld "http://www.w3.org/ns/hydra/core#title"))
+    (is (= "My Collection" (get jsonld "http://www.w3.org/ns/hydra/core#title")))
     (is (= "A test collection" (get jsonld "http://www.w3.org/ns/hydra/core#description")))
     (is (= #{"http://www.w3.org/ns/hydra/core#Class" "http://www.w3.org/ns/hydra/core#Collection"} (into #{} (get jsonld "@type"))))
     (is (= "http://test.com#Class" (get jsonld "lvz:memberClass")))))

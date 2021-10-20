@@ -7,7 +7,8 @@
             [monger.collection :as mc]
             [monger.operators :as mo]
             [monger.conversion :as mconv]
-            [monger.query :as mquery]))
+            [monger.query :as mquery])
+  (:refer-clojure :exclude [update]))
 
 (def mongo (mg/connect))
 

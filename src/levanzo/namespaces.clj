@@ -1,5 +1,6 @@
 (ns levanzo.namespaces
-  (:require [clojure.string :as string]))
+  (:require [clojure.string :as string])
+  (:refer-clojure :exclude [resolve]))
 
 (def ^:dynamic *ns-register* (atom {}))
 (def ^:dynamic *inverse-ns-register* (atom {}))

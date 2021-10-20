@@ -2,14 +2,15 @@
   "This namespace contains functions to define a Hydra API model.
    Functions are provided to build the main model compoments: clases, properties, links, etc.
    Some auxiliary functions to query the model are also provided."
-  (:require [clojure.spec :as s]
-            [clojure.spec.gen :as gen]
+  (:require [clojure.spec.alpha :as s]
+            [clojure.spec.gen.alpha :as gen]
             [clojure.test.check.generators :as tg]
             [clojure.string :as string]
             [levanzo.namespaces :refer [resolve]]
             [levanzo.spec.jsonld :as jsonld-spec]
             [levanzo.utils :refer [clean-nils conformant]]
-            [levanzo.jsonld :refer [add-not-dup assoc-if-some set-if-some link-if-some]]))
+            [levanzo.jsonld :refer [add-not-dup assoc-if-some set-if-some link-if-some]])
+  (:refer-clojure :exclude [resolve class]))
 
 (defprotocol JSONLDSerialisable
   "Protocol that must be implemented by implemented by elements of the model that can

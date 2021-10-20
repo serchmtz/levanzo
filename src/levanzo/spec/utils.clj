@@ -1,6 +1,6 @@
 (ns levanzo.spec.utils
   (:require [clojure.test :refer :all]
-            [clojure.spec.test :as stest]
+            [clojure.spec.test.alpha :as stest]
             [clojure.string :as string]))
 
 (def num-tests (Integer/parseInt (or (System/getenv "NUM_TESTS") "20")))

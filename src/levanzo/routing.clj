@@ -6,7 +6,7 @@
             [levanzo.spec.jsonld :as jsonld-spec]
             [cemerick.url :refer [url]]
             [clojure.string :as string]
-            [clojure.spec :as s]
+            [clojure.spec.alpha :as s]
             [bidi.bidi :as bidi]
             [bidi.verbose :refer [branch param leaf]]
             [clojure.test.check.generators :as tg]))
@@ -20,8 +20,11 @@
                                                        #(tg/return ""))
                                          :path ::jsonld-spec/path
                                          :catch-all boolean?
-                                         :regexp #(instance? java.util.regex.Pattern %)
+                                         :regexp (s/with-gen
+                                                   #(instance? java.util.regex.Pattern %)
+                                                   #(tg/fmap re-pattern (s/gen string?)))
                                          :var  keyword?))))
+
 
 
 (s/def ::model (s/or :class ::hydra/SupportedClass
@@ -80,6 +83,8 @@
                           (tg/return {:get (fn [r h b] b)})
                           (tg/return [])))))
 
+
+
 (def ^:dynamic *routes-register* (atom {}))
 (def ^:dynamic *routes* (atom []))
 
@@ -104,6 +109,8 @@
 (s/fdef process-routes
         :args (s/cat :routes ::route-input)
         :ret ::bidi-branch-route)
+
+
 (defn process-routes
   "Process the routes for an API populating the routes register and building a new set of bidi routes"
   [routes]

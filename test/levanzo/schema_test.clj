@@ -35,7 +35,7 @@
             (is valid)))))))
 
 (deftest parse-supported-class-api-test
-  (doseq [api (take-last 3 (gen/sample (schema-spec/make-api-tree-gen) 15))]
+  (doseq [api (take-last 3 (gen/sample (schema-spec/make-api-tree-gen) 4))]
     (s/valid? ::hydra/ApiDocumentation api)
     (let [validations-map (schema/build-api-validations api)]
       (doseq [klass (:supported-classes api)]

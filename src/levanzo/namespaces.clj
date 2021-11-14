@@ -31,8 +31,8 @@
 
 (defn default-ns
   ([prefix]
-   (register "" prefix))
-  ([] (get @*ns-register* "")))
+   (register "default" prefix))
+  ([] (get @*ns-register* "default")))
 
 (defn prefix-for-ns [ns]
   (get @*ns-register* ns))

@@ -334,7 +334,8 @@
       (let [request-params  (params-map query-string)
             context (assoc context :request-params request-params)]
         (cond
-          (= uri documentation-path) (documentation-handler api)
+          (= uri documentation-path) (documentation-handler (merge api {:documentation-path documentation-path
+                                                                        :base-url (base-url request)}))
           (= uri fragments-path)     (fragments-handler request request-params index)
           :else (let [route (string/replace-first uri mount-path "")
                       handler-info (routing/match route)]

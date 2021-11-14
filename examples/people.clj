@@ -3,7 +3,7 @@
 (require '[clojure.string :as string])
 
 ;; let's check the structure of the arguments
-(clojure.spec.alpha.alpha/check-asserts true)
+(clojure.spec.alpha/check-asserts true)
 
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -216,7 +216,7 @@
          '[levanzo.spec.schema :as schema-spec] :reload)
 
 
-(clojure.pprint/pprint (last (gen/sample (schema-spec/make-payload-gen :read sorg-Person {:supported-classes [sorg-Person]}) 100)))
+(clojure.pprint/pprint (last (gen/sample (schema-spec/make-payload-gen :read sorg-Person {:supported-classes [sorg-Person]}) 10)))
 ;; {"http://schema.org/email"
 ;;  [{"@value" "p6a2b11qHl4NH47On1xyf5KR4onN1zyb68",
 ;;    "@type" "http://www.w3.org/2001/XMLSchema#string"}],

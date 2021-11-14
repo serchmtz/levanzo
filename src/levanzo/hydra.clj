@@ -676,7 +676,8 @@
                                       :gen-max 2))
 
 ;; entrypoint path for this API
-(s/def ::entrypoint ::jsonld-spec/absolute-path)
+(s/def ::entrypoint (s/or :path ::jsonld-spec/absolute-path :uri ::jsonld-spec/uri))
+
 ;; URI of the class for the entrypoint resource
 (s/def ::entrypoint-class ::jsonld-spec/uri)
 ;; api documentation specific props

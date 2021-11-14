@@ -6,7 +6,8 @@
   :monkeypatch-clojure-test false
   :source-paths ["src" "examples"]
   :signing {:gpg-key "antoniogarrote@gmail.com"}
-  :deploy-repositories [["releases" :clojars]
+  :deploy-repositories [["internal" "file:///home/sergio/mavenrepo"]
+                        ["releases" :clojars]
                         ["snapshots" :clojars]]
   :dependencies [[org.clojure/clojure "1.10.3"]
                  ;; [bidi "2.0.16"]
@@ -18,7 +19,7 @@
                  [com.cemerick/url "0.1.1"]
                  ;; [com.taoensso/timbre "4.8.0"]
                  [com.taoensso/timbre "5.1.2"]
-                 [com.github.jsonld-java/jsonld-java "0.9.0"]
+                 [com.github.jsonld-java/jsonld-java "0.13.3" :exclusions [com.fasterxml.jackson.core/jackson-databind]]
                  ;; [com.github.jsonld-java/jsonld-java "0.12.5"]
                  [org.clojure/test.check "1.1.0"]]
   :profiles {:dev {:dependencies [[com.novemberain/monger "3.5.0"]

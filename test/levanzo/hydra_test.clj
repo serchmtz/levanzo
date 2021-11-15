@@ -165,7 +165,7 @@
                                            ::hydra/description "Test API"
                                            ::hydra/supported-classes [test-class]}))]
     (is (= "http://test.com#MyApi" (get jsonld "@id")))
-    (is (= "/entrypoint" (get jsonld "http://www.w3.org/ns/hydra/core#entrypoint")))
+    (is (= "/entrypoint" (get-in jsonld ["http://www.w3.org/ns/hydra/core#entrypoint" "@id"])))
     (is (= (-> test-class :common-props ::hydra/id)
            (get jsonld "lvz:entrypointClass")))
     (is (some? (get jsonld "lvz:entrypointClass")))

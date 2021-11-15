@@ -94,8 +94,11 @@
   ([json-ld]
    (flatten-json-ld json-ld nil)))
 
-(defn compact-json-ld [json-ld context]
-  (java->clj (JsonLdProcessor/compact json-ld context (JsonLdOptions.))))
+(defn compact-json-ld
+  ([json-ld context]
+   (java->clj (JsonLdProcessor/compact json-ld context (JsonLdOptions.))))
+  ([json-ld]
+   (compact-json-ld json-ld nil)))
 
 (defn triples
   ([json-ld]

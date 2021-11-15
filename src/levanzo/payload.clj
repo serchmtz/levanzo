@@ -6,6 +6,7 @@
             [levanzo.spec.jsonld :as jsonld-spec]
             [clojure.spec.alpha :as s]
             [clojure.string :as string]
+            [levanzo.utils :refer [conformant]]
             [clojure.test.check.generators :as tg]
             [cemerick.url :refer [url-encode] :as url])
   (:refer-clojure :exclude [type]))
@@ -30,11 +31,15 @@
 (s/def ::base ::hydra/id)
 (s/def ::ns (s/coll-of (s/or :string-ns string?
                              :kw-ns keyword?)))
+
+(s/def ::context-args (s/cat :options (s/or :map (s/keys :opt-un [::vocab ::base ::ns])
+                                            :uri ::hydra/id)))
+
 (s/fdef context
-        :args (s/cat :options (s/keys :opt-un [::vocab
-                                               ::base
-                                               ::ns]))
-        :ret (s/map-of string? any?))
+  :args ::context-args
+  :ret (s/or :map (s/map-of string? any?)
+             :str string?))
+
 (defn context
   "Set-ups a new JSON-LD context that will be used
    by all the functions manipulating JSON-LD documents in this ns.
@@ -43,42 +48,52 @@
       base:  the @base value for the context
       ns:    list of namespace aliases that will be added to the context"
   ([{:keys [vocab base ns] :as context}]
-   (let [context (-> context
-                     (dissoc :vocab)
-                     (dissoc :base)
-                     (dissoc :ns))
-         prefixes (->> (or ns [])
-                       (map (fn [ns] [(name ns) (lns/prefix-for-ns (name ns))]))
-                       (filter (fn [[ns uri]] (some? uri)))
-                       (into {}))
-         vocab (if (lns/default-ns?)
-                 (or vocab (lns/default-ns))
-                 vocab)]
-     (reset! *context*
-             (->> context
-                  (map (fn [[k v]] [(name k) v]))
-                  (into {})
-                  (merge {"hydra" (lns/hydra)
-                          "rdfs" (lns/rdfs)
-                          "xsd" (lns/xsd)
-                          "sh" (lns/sh)})
-                  (merge prefixes)
-                  (merge {"@vocab" vocab
-                          "@base" base})
-                  (filter (fn [[k v]] (some? v)))
-                  (into {})))))
-  ([] (merge @*context*
-             {"hydra" (lns/hydra)
-              "rdfs" (lns/rdfs)
-              "xsd" (lns/xsd)
-              "sh" (lns/sh)})))
+   (println context)
+  (conformant #'context ::context-args [context]
+               (cond
+                 (map? context)
+                 (let [context (-> context
+                                   (dissoc :vocab)
+                                   (dissoc :base)
+                                   (dissoc :ns))
+                       prefixes (->> (or ns [])
+                                     (map (fn [ns] [(name ns) (lns/prefix-for-ns (name ns))]))
+                                     (filter (fn [[ns uri]] (some? uri)))
+                                     (into {}))
+                       vocab (if (lns/default-ns?)
+                               (or vocab (lns/default-ns))
+                               vocab)]
+                   (reset! *context*
+                           (->> context
+                                (map (fn [[k v]] [(name k) v]))
+                                (into {})
+                                (merge {"hydra" (lns/hydra)
+                                        "rdfs" (lns/rdfs)
+                                        "xsd" (lns/xsd)
+                                        "sh" (lns/sh)})
+                                (merge prefixes)
+                                (merge {"@vocab" vocab
+                                        "@base" base})
+                                (filter (fn [[k v]] (some? v)))
+                                (into {}))))                 
+                 :else
+                 (reset! *context* context))))
+  ([] (if (map? @*context*)        
+        (merge @*context*
+               {"hydra" (lns/hydra)
+                "rdfs" (lns/rdfs)
+                "xsd" (lns/xsd)
+                "sh" (lns/sh)})
+        @*context*)))
+
 
 (s/def ::context boolean?)
 (s/fdef compact
-        :args (s/or :2-arg (s/cat :json-ld (s/map-of string? any?)
-                                  :options (s/keys :opt-un [::context]))
-                    :1-arg (s/cat :json-ld (s/map-of string? any?)))
-        :ret (s/map-of string? any?))
+  :args (s/or :2-arg (s/cat :json-ld (s/map-of string? any?)
+                            :options (s/keys :opt-un [::context]))
+              :1-arg (s/cat :json-ld (s/map-of string? any?)))
+  :ret (s/map-of string? any?))
+
 (defn compact
   "Applies the compact JSON-LD algorithm to the provided JSON-LD
    document using the namespace @context.
@@ -92,8 +107,8 @@
   ([json-ld] (compact json-ld {:context true})))
 
 (s/fdef expand
-        :args (s/cat :jsonld (s/map-of string? any?))
-        :ret ::jsonld-spec/expanded-jsonld)
+  :args (s/cat :jsonld (s/map-of string? any?))
+  :ret ::jsonld-spec/expanded-jsonld)
 (defn expand
   "Expands the provided JSON-LD document"
   [json-ld]
@@ -108,8 +123,8 @@
       jsonld/flatten-json-ld))
 
 (s/fdef uri-or-model
-        :args (s/cat :object ::uri-or-model-args)
-        :ret ::hydra/id)
+  :args (s/cat :object ::uri-or-model-args)
+  :ret ::hydra/id)
 (defn uri-or-model [object]
   (s/assert ::uri-or-model-args object)
   (let [uri (if (string? object)
@@ -122,17 +137,17 @@
 ;; (s/def ::args (s/or :keys keyword?
 ;;                     :val any?))
 (s/def ::args (s/coll-of (s/or :keys keyword?
-                         :val any?)))
+                               :val any?)))
 
 
 (s/def ::model ::uri-or-model-args)
 (s/def ::base ::jsonld-spec/uri)
 
 (s/fdef link-for
-        :args (s/cat :args-map (s/keys :req-un [::model]
-                                       :opt-un [::args
-                                                ::base]))
-        :ret ::hydra/id)
+  :args (s/cat :args-map (s/keys :req-un [::model]
+                                 :opt-un [::args
+                                          ::base]))
+  :ret ::hydra/id)
 (defn link-for [{:keys [model args base]
                  :as link-args
                  :or {args []}}]
@@ -148,10 +163,10 @@
         (str (or base "") link)))))
 
 (s/fdef get-supported-properties
-        :args (s/cat :jsonld (s/map-of string? any?)
-                     :property ::model
-                     :default any?)
-        :ret (s/coll-of map?))
+  :args (s/cat :jsonld (s/map-of string? any?)
+               :property ::model
+               :default any?)
+  :ret (s/coll-of map?))
 (defn get-supported-properties
   "Returns all the values for a literal property"
   ([jsonld property default]
@@ -163,10 +178,10 @@
   ([jsonld property] (get-supported-properties jsonld property nil)))
 
 (s/fdef get-supported-property
-        :args (s/cat :jsonld (s/map-of string? any?)
-                     :property ::model
-                     :default any?)
-        :ret map?)
+  :args (s/cat :jsonld (s/map-of string? any?)
+               :property ::model
+               :default any?)
+  :ret map?)
 (defn get-supported-property
   "Returns the first value for a property"
   ([jsonld property default]
@@ -196,21 +211,21 @@
       (throw (Exception. (str "Error retrieving link " (hydra/id property) " multiple links retrieved"))))))
 
 (s/fdef jsonld
-        :args (s/with-gen
-                (s/cat :props (s/+ (s/or :map-tuple   (s/tuple string? any?)
-                                         :jsondl-pair (s/map-of string? any?))))
-                #(tg/fmap (fn [vals]
-                            (->> vals
-                                 (map (fn [[k v]]
-                                        (if (string? v)
-                                          [k {"@id" v}]
-                                          [k {"@value" v}])))
-                                 (into [])))
-                          (tg/vector
-                           (tg/tuple (s/gen ::jsonld-spec/uri)
-                                     (tg/one-of [(s/gen ::jsonld-spec/uri)
-                                                 tg/pos-int])))))
-        :ret ::jsonld-spec/expanded-jsonld)
+  :args (s/with-gen
+          (s/cat :props (s/+ (s/or :map-tuple   (s/tuple string? any?)
+                                   :jsondl-pair (s/map-of string? any?))))
+          #(tg/fmap (fn [vals]
+                      (->> vals
+                           (map (fn [[k v]]
+                                  (if (string? v)
+                                    [k {"@id" v}]
+                                    [k {"@value" v}])))
+                           (into [])))
+                    (tg/vector
+                     (tg/tuple (s/gen ::jsonld-spec/uri)
+                               (tg/one-of [(s/gen ::jsonld-spec/uri)
+                                           tg/pos-int])))))
+  :ret ::jsonld-spec/expanded-jsonld)
 
 
 (defn jsonld
@@ -221,7 +236,9 @@
             props)
   (let [json (into {} props)
         context (get json "@context" {})
-        context (merge @*context* context)]
+        context (if (map?  @*context*)
+                  (merge @*context* context)
+                  @*context*)]
     (-> (if (not= {} context)
           (assoc json "@context" context)
           json)
@@ -274,9 +291,9 @@
    {"@type" (uri-or-model model)}))
 
 (s/fdef supported-property
-        :args (s/cat :args (s/keys :req-un [::property
-                                            ::value]))
-        :ret (s/map-of string? any?))
+  :args (s/cat :args (s/keys :req-un [::property
+                                      ::value]))
+  :ret (s/map-of string? any?))
 (defn supported-property
   "Generates a JSON-LD [property literal-value] pair"
   ([{:keys [property value] :as args}]
@@ -284,11 +301,11 @@
    {(uri-or-model property) value}))
 
 (s/fdef supported-link
-        :args (s/cat :args (s/keys :req-un [::property
-                                            ::model]
-                                   :opt-un [::args
-                                            ::base]))
-        :ret (s/map-of string? any?))
+  :args (s/cat :args (s/keys :req-un [::property
+                                      ::model]
+                             :opt-un [::args
+                                      ::base]))
+  :ret (s/map-of string? any?))
 (defn supported-link
   "Generates a JSON-LD [property {@id link}]  pair"
   ([{:keys[property model args base]}]
@@ -301,9 +318,9 @@
 
 (s/def ::link ::hydra/id)
 (s/fdef supported-external-link
-        :args (s/cat :args (s/keys :req-un [::property
-                                            ::link]))
-        :ret (s/map-of string? any?))
+  :args (s/cat :args (s/keys :req-un [::property
+                                      ::link]))
+  :ret (s/map-of string? any?))
 (defn supported-external-link
   "Geneates a JSON-LD [property {@id link}] pair for an external URL"
   [{:keys [property link] :as args}]
@@ -350,17 +367,17 @@
     nil))
 
 (s/fdef partial-view
-        :args (s/cat :view-map (s/keys :req-un [::model
-                                                ::pagination-param
-                                                ::model
-                                                ::args
-                                                ::current]
-                                       :opt-un [::args
-                                                ::first
-                                                ::last
-                                                ::next
-                                                ::previous]))
-        :ret ::view)
+  :args (s/cat :view-map (s/keys :req-un [::model
+                                          ::pagination-param
+                                          ::model
+                                          ::args
+                                          ::current]
+                                 :opt-un [::args
+                                          ::first
+                                          ::last
+                                          ::next
+                                          ::previous]))
+  :ret ::view)
 (defn partial-view
   "Generates a collection partial view for a collection"
   [{:keys [model args current first last next previous pagination-param] :or {args {}}}]
@@ -391,14 +408,14 @@
                               :opt-un [::representation]))
 
 (s/fdef supported-template
-        :args (s/cat :iri-template ::iri-template)
-        :ret (s/tuple
-              ::hydra/id
-              (s/and map?
-                     #(= (get % "@type") (lns/hydra "IriTemplate"))
-                     #(some? (get % (lns/hydra "template")))
-                     #(some? (get % (lns/hydra "variableRepresentation")))
-                     #(some? (get % (lns/hydra "mapping"))))))
+  :args (s/cat :iri-template ::iri-template)
+  :ret (s/tuple
+        ::hydra/id
+        (s/and map?
+               #(= (get % "@type") (lns/hydra "IriTemplate"))
+               #(some? (get % (lns/hydra "template")))
+               #(some? (get % (lns/hydra "variableRepresentation")))
+               #(some? (get % (lns/hydra "mapping"))))))
 (defn supported-template
   "Generates a IRI template for a TemplatedLink property"
   [{:keys [property template representation mapping] :or {representation :basic} :as iri-template}]

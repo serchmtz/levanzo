@@ -729,7 +729,7 @@
 (extend-protocol JSONLDSerialisable levanzo.hydra.ApiDocumentation
                  (->jsonld [this]
                    (let [jsonld {"@type" (resolve "hydra:ApiDocumentation")
-                                 (resolve "hydra:entrypoint") (-> this :api-props ::entrypoint)
+                                 (resolve "hydra:entrypoint") {"@id" (-> this :api-props ::entrypoint)}
                                  "lvz:entrypointClass" (-> this :api-props ::entrypoint-class)
                                  (resolve "hydra:supportedClass") (mapv ->jsonld (-> this :supported-classes))}]
                      (->> jsonld

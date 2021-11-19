@@ -27,10 +27,13 @@
 (s/def ::type ::jsonld-spec/uri)
 ;; Hydra title for a model element
 (s/def ::title string?)
+;; Hydra label for a model element
+(s/def ::label string?)
 ;; Hydra description for a model element
 (s/def ::description string?)
 ;; Hydra common props for all Hydra model elements
 (s/def ::common-props (s/keys :opt [::id ::type ::title ::description]))
+
 
 (defn- generic->jsonld
   "Sets common RDF properties for all Hydra elements"
@@ -38,6 +41,7 @@
   (->> jsonld
        (set-if-some (::id element) "@id")
        (assoc-if-some ::type "@type" element)
+       (set-if-some (::label element) (resolve "rdfs:label"))
        (set-if-some (::title element) (resolve "hydra:title"))
        (set-if-some (::description element) (resolve "hydra:description"))))
 

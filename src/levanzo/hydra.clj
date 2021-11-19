@@ -32,7 +32,7 @@
 ;; Hydra description for a model element
 (s/def ::description string?)
 ;; Hydra common props for all Hydra model elements
-(s/def ::common-props (s/keys :opt [::id ::type ::title ::description]))
+(s/def ::common-props (s/keys :opt [::id ::type ::title ::label ::description]))
 
 
 (defn- generic->jsonld

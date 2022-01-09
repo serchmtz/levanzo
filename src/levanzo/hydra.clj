@@ -241,7 +241,8 @@
                           (set-if-some (-> this :common-props ::title) (resolve "rdfs:label"))
                           (set-if-some (-> this :common-props ::description) (resolve "rdfs:comment"))
                           (link-if-some (-> this :rdf-props ::domain) (resolve "rdfs:domain"))
-                          (link-if-some (-> this :rdf-props ::range) (resolve "rdfs:range")))))
+                          (link-if-some (-> this :rdf-props ::range) (resolve "rdfs:range"))
+                          (generic->jsonld (:common-props this)))))
                  (->shacl [this]))
 
 (s/def ::Property (s/with-gen
